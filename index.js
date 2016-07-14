@@ -24,7 +24,7 @@
     strictSSL: true
   });
 
-  jira.findIssue('BPSO-25131')
+  jira.findIssue(program.issue || process.env.JIRA_ISSUE)
     .then(issue => {
       let comments = issue.fields.comment.comments
       comments
@@ -39,9 +39,11 @@
             dasherized,
             camelized
           })
-          utils.write(`${camelized}Test.js`, compiled, (err) => {
+          let file = `${camelized}Test.js`
+          utils.write(file, compiled, (err) => {
             if (err)
               utils.error(err)
+            utils.log(`Successfully written file: ${file}`)
           })
           utils.debug(compiled)
         })
