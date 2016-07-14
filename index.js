@@ -43,7 +43,7 @@
           .forEach(comment => {
             let
               name       = Object.keys(comment)[0],
-              tests     = comment[name],
+              tests      = comment[name],
               title      = name.replace(/(.*)\|(.*)/, "$2")
               dasherized = utils.string(title.toLowerCase(), 'dasherize')
               camelized  = utils.string(title, 'camelize')
