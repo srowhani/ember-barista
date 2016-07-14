@@ -2,13 +2,14 @@
  * Convenience tool for this convenience tool.
  * @param chalk      - Makes text pretty
  * @param yaml       - Parses yaml
+ * @param inquire    - prompting
  * @param Handlebars - Powerful template compiler
  * @param S          - string.js
  * @param fs         - node filesystem
  * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, Handlebars, S, fs, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, package) {
   module.exports = {
     // = Properties =================
     chalk,
@@ -47,11 +48,9 @@
         elem.forEach(el => {
           let key = Object.keys(el)[0]
           let tests = el[key]['Tests']
-          // console.log(tests)
           content += `\n${S('  ').times(2)}describe('${key}', function () {\n`
           content += populate('', tests) + `${S('  ').times(2)}})`
         })
-        // console.log(content)
         return new Handlebars.SafeString(content)
       })
     },
@@ -61,6 +60,9 @@
     },
     log (msg) {
       console.log(chalk.cyan(msg))
+    },
+    prompt (prompts) {
+      return inquire.prompt(prompts)
     },
     debug (msg) {
       if (this.config.debug) {
@@ -90,6 +92,7 @@
 })(
   require('chalk'),
   require('js-yaml'),
+  require('inquirer'),
   require('handlebars'),
   require('string'),
   require('fs'),
