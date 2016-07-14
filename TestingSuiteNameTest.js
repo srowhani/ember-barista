@@ -26,6 +26,31 @@ describeComponent(
     afterEach(function () {
       sandbox.restore()
     })
-
+    beforeEach(function () {
+      
+    })
+    
+    describe('Username | Text Field', function () {
+      it('Fires input event', function () {})
+      describe('Focus and blur events', function () {
+          it('Does this', function () {})
+          it('Does that', function () {})
+          describe('Keeps Nesting', function () {
+              it('Nested does this', function () {})
+              it('Nested does that', function () {})
+          })
+      })
+    })
+    describe('Password | Text Field', function () {
+      it('Fires input event', function () {})
+      describe('Focus and blur events', function () {
+          it('Does this', function () {})
+          it('Does that', function () {})
+          describe('Keeps Nesting', function () {
+              it('Nested does this', function () {})
+              it('Nested does that', function () {})
+          })
+      })
+    })
   }
 )

@@ -27,7 +27,8 @@ describeComponent(
     afterEach(function () {
       sandbox.restore()
     })
-
+    {{> before}}
+    {{populate tests}}
   }
 )
 `
