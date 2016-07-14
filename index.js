@@ -32,10 +32,16 @@
         .filter(utils.validate)
         .forEach(comment => {
           //TODO parse comment, compile
-          let testName = Object.keys(comment)[0]
+          let name = Object.keys(comment)[0].replace(/(.*)\|(.*)/, "$2"),
+            dasherized = utils.string(name.toLowerCase(), 'dasherize')
+            camelized = utils.string(name, 'camelize')
           let compiled = utils.compile({
-            dasherizedName: 'lorem-ipsum',
-            titleCaseName: 'LoremIpsumTest'
+            dasherized,
+            camelized
+          })
+          utils.write(`${camelized}Test.js`, compiled, (err) => {
+            if (err)
+              utils.error(err)
           })
           utils.debug(compiled)
         })

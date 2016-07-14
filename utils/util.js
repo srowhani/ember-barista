@@ -1,6 +1,23 @@
-;(function (chalk, yaml, Handlebars, package) {
+/**
+ * Convenience tool for this convenience tool.
+ * @param chalk      - Makes text pretty
+ * @param yaml       - Parses yaml
+ * @param Handlebars - Powerful template compiler
+ * @param S          - string.js
+ * @param fs         - node filesystem
+ * @param package    - package.json
+ * @return util
+ */
+;(function (chalk, yaml, Handlebars, S, fs, package) {
   module.exports = {
+    // = Properties =================
+    chalk,
+    yaml,
+    Handlebars,
+    S,
+    fs,
     package,
+    // = Methods =================
     init (program) {
       this.config = program
     },
@@ -16,6 +33,9 @@
         this.log(`DEBUG: ${msg}`)
       }
     },
+    string (text, method) {
+      return S(text)[method]().s
+    },
     parse (obj) {
       try {
         return yaml.load(obj.body)
@@ -30,11 +50,14 @@
     },
     compile (data) {
       return Handlebars.compile(require('./template'))(data)
-    }
+    },
+    write: fs.writeFile
   }
 })(
   require('chalk'),
   require('js-yaml'),
   require('handlebars'),
+  require('string'),
+  require('fs'),
   require('../package.json')
 );

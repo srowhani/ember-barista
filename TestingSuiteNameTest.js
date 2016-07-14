@@ -1,5 +1,4 @@
-module.exports =
-`import chai from 'chai'
+import chai from 'chai'
 const expect = chai.expect
 import sinon from 'sinon'
 import {
@@ -12,8 +11,8 @@ import {
 } from 'mocha'
 
 describeComponent(
-  '{{dasherized}}',
-  '{{camelized}}', {
+  'testing-suite-name',
+  'TestingSuiteName', {
     acceptance: true
   },
   function () {
@@ -30,4 +29,3 @@ describeComponent(
 
   }
 )
-`
