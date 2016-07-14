@@ -1,4 +1,4 @@
-# Mocha-jira
+# ember-barista
 
 Tool to make life easier.
 
