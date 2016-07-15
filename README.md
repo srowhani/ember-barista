@@ -6,7 +6,7 @@ In Jira, add a comment in the following format.
 
 ```yaml
 Acceptance Criteria | Testing Suite Name:
-  - Username | Text Field:
+  - Username Input | Fillable:
       Before:
         - Create Text Field
         - Assign ID
@@ -19,7 +19,7 @@ Acceptance Criteria | Testing Suite Name:
           - Keeps Nesting:
             - Nested does this
             - Nested does that
-  - Password | Text Field:
+  - Password Field | Triggerable:
       Before:
         - Create Text Field
       Tests:
@@ -36,16 +36,30 @@ Will generate a test in the following format:
 
 ```js
 import chai from 'chai'
-const expect = chai.expect
 import sinon from 'sinon'
+
 import {
   describeComponent
 } from 'ember-mocha'
+
 import {
   beforeEach,
   afterEach,
   it
 } from 'mocha'
+
+import {
+  create,
+  fillable,
+  triggerable
+} from 'ember-cli-page-object';
+
+const expect = chai.expect
+
+const PageObject = create({
+  'username-input': fillable('.username-input'),
+  'password-field': triggerable('.password-field')
+})
 
 describeComponent(
   'testing-suite-name',
@@ -64,7 +78,7 @@ describeComponent(
       sandbox.restore()
     })
 
-    describe('Username | Text Field', function () {
+    describe('Username Input | Fillable', function () {
       beforeEach(function () {
         // TODO Create Text Field
         // TODO Assign ID
@@ -80,7 +94,7 @@ describeComponent(
         })
       })
     })
-    describe('Password | Text Field', function () {
+    describe('Password Field | Triggerable', function () {
       beforeEach(function () {
         // TODO Create Text Field
       })

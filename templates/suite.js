@@ -1,15 +1,27 @@
 module.exports =
 `import chai from 'chai'
-const expect = chai.expect
 import sinon from 'sinon'
+
 import {
   describeComponent
 } from 'ember-mocha'
+
 import {
   beforeEach,
   afterEach,
   it
 } from 'mocha'
+
+import {
+  create,
+{{imports tests}}
+} from 'ember-cli-page-object';
+
+const expect = chai.expect
+
+const PageObject = create({
+{{page tests}}
+})
 
 describeComponent(
   '{{dasherized}}',

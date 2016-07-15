@@ -6,10 +6,11 @@
  * @param Handlebars - Powerful template compiler
  * @param S          - string.js
  * @param fs         - node filesystem
+ * @param types      - list of types to translate to ember-cli-page-object
  * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, types, package) {
   module.exports = {
     // = Properties =================
     chalk,
@@ -54,6 +55,35 @@
         })
         return new Handlebars.SafeString(content)
       })
+      Handlebars.registerHelper('page', function (elem, options) {
+        let content = ''
+        elem.forEach(el => {
+          let key = Object.keys(el)[0]
+          let tests = el[key]['Tests']
+          if (tests) {
+            let name  = S(key.replace(/(.*)\|(.*)/, "$1").toLowerCase().trim()).dasherize().s
+            let type = key.replace(/(.*)\|(.*)/, "$2").toLowerCase().trim()
+            if (types.indexOf(type) > -1) {
+              content += `  '${name}': ${type}('.${name}')${elem[elem.length-1] !== el ? ',\n' : ''}`
+            }
+          }
+        })
+        return new Handlebars.SafeString(content)
+      })
+      Handlebars.registerHelper('imports', function (elem, options) {
+        let content = ''
+        elem.forEach(el => {
+          let key = Object.keys(el)[0]
+          let tests = el[key]['Tests']
+          if (tests) {
+            let type = key.replace(/(.*)\|(.*)/, "$2").toLowerCase().trim()
+            if (types.indexOf(type) > -1) {
+              content += `  ${type}${elem[elem.length-1] !== el ? ',\n' : ''}`
+            }
+          }
+        })
+        return new Handlebars.SafeString(content)
+      })
     },
     error (err) {
       console.error(chalk.red.bold(err))
@@ -88,7 +118,7 @@
     compile (template, data) {
       return Handlebars.compile(require(`../templates/${template}`))(data)
     },
-    write: fs.writeFile
+    write: fs.writeFile,
   }
 })(
   require('chalk'),
@@ -97,5 +127,6 @@
   require('handlebars'),
   require('string'),
   require('fs'),
+  require('./pagetypes'),
   require('../package.json')
 );
