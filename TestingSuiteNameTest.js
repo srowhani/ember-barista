@@ -30,6 +30,8 @@ describeComponent(
     describe('Username | Text Field', function () {
       beforeEach(function () {
         // TODO Create Text Field
+        // TODO Assign ID
+        // TODO Set disabled
       })
       it('Fires input event', function () {})
       describe('Focus and blur events', function () {
