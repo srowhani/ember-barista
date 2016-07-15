@@ -44,10 +44,10 @@
             let
               name       = Object.keys(comment)[0],
               tests      = comment[name],
-              title      = name.replace(/(.*)\|(.*)/, "$2")
+              title      = name.replace(/(.*)\|(.*)/, "$2").trim()
               dasherized = utils.string(title.toLowerCase(), 'dasherize')
               camelized  = utils.string(title, 'camelize')
-              
+
             let final = utils.compile('suite', {
               title,
               dasherized,

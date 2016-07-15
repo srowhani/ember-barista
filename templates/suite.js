@@ -3,10 +3,6 @@ module.exports =
 import sinon from 'sinon'
 
 import {
-  describeComponent
-} from 'ember-mocha'
-
-import {
   beforeEach,
   afterEach,
   it
@@ -15,7 +11,7 @@ import {
 import {
   create,
 {{imports tests}}
-} from 'ember-cli-page-object';
+} from 'ember-cli-page-object'
 
 const expect = chai.expect
 
@@ -23,23 +19,14 @@ const PageObject = create({
 {{page tests}}
 })
 
-describeComponent(
-  '{{dasherized}}',
-  '{{camelized}}', {
-    acceptance: true
-  },
-  function () {
-    let component, sandbox
+describe('Acceptance: {{title}}', function () {
+  beforeEach(function () {
+    application = startApp()
+  })
 
-    beforeEach(function () {
-      component = this.subject()
-      sandbox = sinon.sandbox.create()
-    })
-
-    afterEach(function () {
-      sandbox.restore()
-    })
-    {{describe tests}}
-  }
-)
+  afterEach(function () {
+    destroyApp(application)
+  })
+{{describe tests}}
+})
 `
