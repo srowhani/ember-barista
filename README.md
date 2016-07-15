@@ -118,3 +118,8 @@ describeComponent(
 ## Running
 
 `./index.js`
+
+## TODO
+
+- Generate files in correct location (relative path to node_modules)
+- Automation
