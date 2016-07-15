@@ -47,12 +47,11 @@
               title      = name.replace(/(.*)\|(.*)/, "$2")
               dasherized = utils.string(title.toLowerCase(), 'dasherize')
               camelized  = utils.string(title, 'camelize')
-
             let final = utils.compile('suite', {
               title,
               dasherized,
               camelized,
-              tests
+              tests,
             })
 
             let file = `${camelized}Test.js`

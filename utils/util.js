@@ -21,35 +21,36 @@
     // = Methods =================
     init (program) {
       this.config = program
-      this.Handlebars.registerPartial('describe', require('../templates/describe'))
-      this.Handlebars.registerPartial('before', require('../templates/before'))
-      Handlebars.registerHelper('isArray', function(elem, options) {
-        if(elem instanceof Array) {
-          return options.fn(this)
-        }
-        return options.inverse(this)
-      })
-      let populate = function (content = '', tests, depth = 2) {
+      let populate = function (content = '', tests, depth = 3) {
         if (tests instanceof Array) {
           tests.forEach(test => {
             content += populate('', test, depth + 1)
           })
           return content
         } else if (typeof tests === 'object') {
-          console.log(tests)
           let k = Object.keys(tests)[0]
-          content += `${S('  ').times(depth)}describe('${k}', function () {\n`
-          return populate(content, tests[k], depth + 1) + `${S('  ').times(depth)}})\n`
+          content += `${S(' ').times(depth + 2)}describe('${k}', function () {\n`
+          return populate(content, tests[k], depth + 1) + `${S(' ').times(depth + 2)}})\n`
         }
-        return content + `${S('  ').times(depth)}it('${tests}', function () {})\n`
+        return content + `${S(' ').times(depth + 2)}it('${tests}', function () {})\n`
       }
-      Handlebars.registerHelper('populate', function (elem, options) {
+      Handlebars.registerHelper('describe', function (elem, options) {
         let content = ''
         elem.forEach(el => {
           let key = Object.keys(el)[0]
           let tests = el[key]['Tests']
-          content += `\n${S('  ').times(2)}describe('${key}', function () {\n`
-          content += populate('', tests) + `${S('  ').times(2)}})`
+          if (tests) {
+            content += `\n${S('  ').times(2)}describe('${key}', function () {\n`
+            let before = el[key]['Before']
+            if (before && before instanceof Array) {
+              content += `${S('  ').times(3)}beforeEach(function () {\n`
+              before.forEach(e => {
+                content += `${S('  ').times(4)}// TODO ${e}\n`
+              })
+              content += `${S('  ').times(3)}})\n`
+            }
+            content += populate('', tests) + `${S('  ').times(2)}})`
+          }
         })
         return new Handlebars.SafeString(content)
       })
