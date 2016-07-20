@@ -6,11 +6,12 @@
  * @param Handlebars - Powerful template compiler
  * @param S          - string.js
  * @param fs         - node filesystem
+ * @param types      - exec sync
  * @param types      - list of types to translate to ember-cli-page-object
  * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, types, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, package) {
   module.exports = {
     // = Properties =================
     chalk,
@@ -18,6 +19,7 @@
     Handlebars,
     S,
     fs,
+    exec,
     package,
     // = Methods =================
     init (program) {
@@ -116,9 +118,15 @@
         /Acceptance Criteria/.test(Object.keys(el)[0])
     },
     compile (template, data) {
-      return Handlebars.compile(require(`../templates/${template}`))(data)
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(Handlebars.compile(require(`../templates/${template}`))(data))
+        } catch (e) {
+          reject(e)
+        }
+      })
     },
-    write: fs.writeFile,
+    write: fs.writeFileSync,
   }
 })(
   require('chalk'),
@@ -127,6 +135,7 @@
   require('handlebars'),
   require('string'),
   require('fs'),
+  require('child_process').execSync,
   require('./pagetypes'),
   require('../package.json')
 );

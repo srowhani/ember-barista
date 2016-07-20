@@ -13,7 +13,8 @@
   "keywords": [
     "test",
     "mocha",
-    "jira"
+    "jira",
+    "ember-addon"
   ],
   "author": "Seena Rowhani",
   "license": "MIT",
