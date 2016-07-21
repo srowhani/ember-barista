@@ -6,11 +6,12 @@
  * @param Handlebars - Powerful template compiler
  * @param S          - string.js
  * @param fs         - node filesystem
+ * @param types      - exec sync
  * @param types      - list of types to translate to ember-cli-page-object
  * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, types, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, package) {
   module.exports = {
     // = Properties =================
     chalk,
@@ -18,11 +19,12 @@
     Handlebars,
     S,
     fs,
+    exec,
     package,
     // = Methods =================
     init (program) {
       this.config = program
-      let populate = function (content = '', tests, depth = 3) {
+      let populate = function (content = '', tests, depth = 2) {
         if (tests instanceof Array) {
           tests.forEach(test => {
             content += populate('', test, depth + 1)
@@ -30,10 +32,10 @@
           return content
         } else if (typeof tests === 'object') {
           let k = Object.keys(tests)[0]
-          content += `${S(' ').times(depth + 2)}describe('${k}', function () {\n`
-          return populate(content, tests[k], depth + 1) + `${S(' ').times(depth + 2)}})\n`
+          content += `${S(' ').times(depth + 1)}describe('${k}', function () {\n`
+          return populate(content, tests[k], depth + 1) + `${S(' ').times(depth + 1)}})\n`
         }
-        return content + `${S(' ').times(depth + 2)}it('${tests}', function () {})\n`
+        return content + `${S(' ').times(depth + 1)}it('${tests}', function () {})\n`
       }
       Handlebars.registerHelper('describe', function (elem, options) {
         let content = ''
@@ -41,16 +43,16 @@
           let key = Object.keys(el)[0]
           let tests = el[key]['Tests']
           if (tests) {
-            content += `\n${S('  ').times(2)}describe('${key}', function () {\n`
+            content += `\n${S('  ').times(1)}describe('${key}', function () {\n`
             let before = el[key]['Before']
             if (before && before instanceof Array) {
-              content += `${S('  ').times(3)}beforeEach(function () {\n`
+              content += `${S('  ').times(2)}beforeEach(function () {\n`
               before.forEach(e => {
-                content += `${S('  ').times(4)}// TODO ${e}\n`
+                content += `${S('  ').times(3)}// TODO ${e}\n`
               })
-              content += `${S('  ').times(3)}})\n`
+              content += `${S('  ').times(2)}})\n`
             }
-            content += populate('', tests) + `${S('  ').times(2)}})`
+            content += populate('', tests) + `${S('  ').times(1)}})`
           }
         })
         return new Handlebars.SafeString(content)
@@ -116,9 +118,15 @@
         /Acceptance Criteria/.test(Object.keys(el)[0])
     },
     compile (template, data) {
-      return Handlebars.compile(require(`../templates/${template}`))(data)
+      return new Promise((resolve, reject) => {
+        try {
+          resolve(Handlebars.compile(require(`../templates/${template}`))(data))
+        } catch (e) {
+          reject(e)
+        }
+      })
     },
-    write: fs.writeFile,
+    write: fs.writeFileSync,
   }
 })(
   require('chalk'),
@@ -127,6 +135,7 @@
   require('handlebars'),
   require('string'),
   require('fs'),
+  require('child_process').execSync,
   require('./pagetypes'),
   require('../package.json')
 );
