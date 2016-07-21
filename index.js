@@ -11,18 +11,13 @@
         barista: {
           name: 'barista',
           description: `
-              )))
-             (((
-           +-----+
-           |     |]
-           \`-----\'
             Make your life easier.
             Generates tests based on jira issues.
           `,
           works: 'insideProject',
           run (options, args) {
             utils.init(program)
-            let color = utils.chalk.magenta.bgCyan
+            let color = utils.chalk.magenta
             console.log(utils.chalk.yellow(`
             Ember Barista
                  )))
@@ -34,15 +29,15 @@
             return utils.prompt([{
                 type: 'input',
                 name: 'issue',
-                message: color('Enter your Jira issue number:')
+                message: color('Issue Number:')
               }, {
                 type: 'input',
                 name: 'user',
-                message: color('Enter your username:')
+                message: color('Username:')
               }, {
                 type: 'password',
                 name: 'pass',
-                message: color('Enter your password:')
+                message: color('Password:')
               }
             ]).then(answers => {
               let jira = new Jira({
@@ -52,15 +47,18 @@
                 password: answers.pass || process.env.JIRA_PASS,
                 apiVersion: '2',
                 strictSSL: true
-              });
-
+              })
               return jira.findIssue(answers.issue || process.env.JIRA_ISSUE)
                 .then(issue => {
                   let comments = issue.fields.comment.comments
-                  comments
+                  comments = comments
                     .map(utils.parse)
                     .filter(utils.validate)
-                    .forEach(comment => {
+                  if (!comments.length)
+                    utils.error(
+                      `No valid 'barista' commands were found in ${issue.key}`
+                    )
+                  comments.forEach(comment => {
                       let
                         name       = Object.keys(comment)[0],
                         tests      = comment[name],
@@ -81,7 +79,9 @@
                         let file = `${testDir}/${camelized}Test.js`
                         utils.write(file, final)
                         console.log(
-                          utils.chalk.green(`Succesfully wrote file to ${file}`)
+                          utils.chalk.green(
+                            `Succesfully wrote file to ${file}`
+                          )
                         )
                       })
                     })
