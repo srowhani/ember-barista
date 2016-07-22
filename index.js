@@ -59,33 +59,36 @@
                       `No valid 'barista' commands were found in ${issue.key}`
                     )
                   comments.forEach(comment => {
-                      let
-                        name       = Object.keys(comment)[0],
-                        tests      = comment[name],
-                        title      = name.replace(/(.*)\|(.*)/, "$2").trim()
-                        dasherized = utils.string(title.toLowerCase(), 'dasherize')
-                        camelized  = utils.string(title, 'camelize')
-
-                      return utils.compile('suite', {
-                        title,
-                        dasherized,
-                        camelized,
-                        tests,
-                      }).then(final => {
-                        let testDir = `${this.project.root}/tests/acceptance`
-                        try {
-                          utils.exec(`mkdir ${testDir}`)
-                        } catch(e) {}
-                        let file = `${testDir}/${camelized}Test.js`
-                        utils.write(file, final)
-                        console.log(
-                          utils.chalk.green(
-                            `Succesfully wrote file to ${file}`
-                          )
+                    let
+                      name       = Object.keys(comment)[0],
+                      elements   = comment[name]['Elements'] || [],
+                      scenarios  = comment[name]['Scenarios'] || [],
+                      title      = name.indexOf('|') > -1 ?
+                        name.replace(/(.*)\|(.*)/, "$2").trim()
+                        || issue.fields.summary : issue.fields.summary
+                      dasherized = utils.string(title.toLowerCase(), 'dasherize')
+                      camelized  = utils.string(title, 'camelize')
+                    return utils.compile('suite', {
+                      title,
+                      dasherized,
+                      camelized,
+                      elements,
+                      scenarios,
+                    }).then(final => {
+                      let testDir = `${this.project.root}/tests/acceptance`
+                      try {
+                        utils.exec(`mkdir ${testDir}`)
+                      } catch(e) {}
+                      let file = `${testDir}/${dasherized}-test.js`
+                      utils.write(file, final)
+                      console.log(
+                        utils.chalk.green(
+                          `Succesfully wrote file to ${file}`
                         )
-                      })
+                      )
                     })
-                }).catch(utils.error)
+                })
+              }).catch(utils.error)
             })
           }
         }
