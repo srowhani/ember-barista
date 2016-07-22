@@ -79,11 +79,9 @@
                       elements,
                       scenarios,
                     }).then(final => {
-                      let testDir = `${this.project.root}/tests/acceptance`
-                      try {
-                        utils.exec(`mkdir ${testDir}`)
-                      } catch(e) {}
-                      let file = `${testDir}/${dasherized}-test.js`
+                      let dir = `${this.project.root}/tests/acceptance`
+                      utils.fs.mkdirSync(dir)
+                      let file = `${dir}/${dasherized}-test.js`
                       utils.write(file, final)
                       console.log(
                         utils.chalk.green(
