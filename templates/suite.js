@@ -9,7 +9,7 @@ import {
 } from 'mocha'
 
 import {
-  create{{if elements ','}}
+  create{{#if elements}},{{/if}}
 {{imports elements}}
 } from 'ember-cli-page-object'
 

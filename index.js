@@ -3,7 +3,7 @@
  * @author Seena Rowhani
  * @description Auto-generate test scaffolding using JIRA
  */
-;(function (program, Jira, utils) {
+;(function (Jira, utils) {
   module.exports = {
     name: 'ember-barista',
     includedCommands () {
@@ -16,7 +16,7 @@
           `,
           works: 'insideProject',
           run (options, args) {
-            utils.init(program)
+            utils.init(options)
             let color = utils.chalk.magenta
             console.log(utils.chalk.yellow(`
             Ember Barista
@@ -27,6 +27,10 @@
               \`-----\'
             `))
             return utils.prompt([{
+                type: 'input',
+                name: 'host',
+                message: color('Jira Server:')
+              }, {
                 type: 'input',
                 name: 'issue',
                 message: color('Issue Number:')
@@ -42,7 +46,7 @@
             ]).then(answers => {
               let jira = new Jira({
                 protocol: 'https',
-                host: program.host || process.env.JIRA_HOST,
+                host: answers.host || process.env.JIRA_HOST,
                 username: answers.user || process.env.JIRA_USER,
                 password: answers.pass || process.env.JIRA_PASS,
                 apiVersion: '2',
@@ -96,7 +100,6 @@
     }
   }
 })(
-  require('commander'),
   require('jira-client'),
   require('./utils/util')
 );

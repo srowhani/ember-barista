@@ -22,8 +22,7 @@
     exec,
     package,
     // = Methods =================
-    init (program) {
-      this.config = program
+    init () {
       let populate = function (content = '', tests, depth = 2) {
         if (tests instanceof Array) {
           tests.forEach(test => {
@@ -73,12 +72,10 @@
       Handlebars.registerHelper('page', function (elem, options) {
         let content = ''
         elem.forEach(el => {
-          console.log(el)
           let key  = Object.keys(el)[0]
           let name = S(key.toLowerCase()).dasherize().s
           if (el[key]['Type']) {
             let type = el[key]['Type'].toLowerCase().trim()
-            console.log(type)
             if (types.indexOf(type) > -1) {
               content += `  '${name}': ${type}('.${name}')${elem[elem.length-1] !== el ? ',\n' : ''}`
             }
