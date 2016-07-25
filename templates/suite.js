@@ -9,14 +9,14 @@ import {
 } from 'mocha'
 
 import {
-  create,
-{{imports tests}}
+  create{{#if elements}},{{/if}}
+{{imports elements}}
 } from 'ember-cli-page-object'
 
 const expect = chai.expect
 
 const PageObject = create({
-{{page tests}}
+{{page elements}}
 })
 
 describe('Acceptance: {{title}}', function () {
@@ -27,6 +27,6 @@ describe('Acceptance: {{title}}', function () {
   afterEach(function () {
     destroyApp(application)
   })
-{{describe tests}}
+{{describe scenarios}}
 })
 `
