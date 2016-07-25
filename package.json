@@ -1,6 +1,6 @@
 {
   "name": "ember-barista",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Auto-generate test scaffolding using JIRA",
   "main": "index.js",
   "scripts": {
