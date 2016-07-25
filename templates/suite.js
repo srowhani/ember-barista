@@ -1,32 +1,3 @@
-module.exports =
-`import chai from 'chai'
-import sinon from 'sinon'
+'use strict';
 
-import {
-  beforeEach,
-  afterEach,
-  it
-} from 'mocha'
-
-import {
-  create{{#if elements}},{{/if}}
-{{imports elements}}
-} from 'ember-cli-page-object'
-
-const expect = chai.expect
-
-const PageObject = create({
-{{page elements}}
-})
-
-describe('Acceptance: {{title}}', function () {
-  beforeEach(function () {
-    application = startApp()
-  })
-
-  afterEach(function () {
-    destroyApp(application)
-  })
-{{describe scenarios}}
-})
-`
+module.exports = 'import chai from \'chai\'\nimport sinon from \'sinon\'\n\nimport {\n  beforeEach,\n  afterEach,\n  it\n} from \'mocha\'\n\nimport {\n  create{{#if elements}},{{/if}}\n{{imports elements}}\n} from \'ember-cli-page-object\'\n\nconst expect = chai.expect\n\nconst PageObject = create({\n{{page elements}}\n})\n\ndescribe(\'Acceptance: {{title}}\', function () {\n  beforeEach(function () {\n    application = startApp()\n  })\n\n  afterEach(function () {\n    destroyApp(application)\n  })\n{{describe scenarios}}\n})\n';
