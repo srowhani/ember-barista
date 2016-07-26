@@ -75,7 +75,6 @@
                       console.log(ex)
                     }
                     var file = dir + '/' + dasherized + '-test.js';
-                    console.log(file)
                     try {
                       utils.fs.writeFileSync(file, final);
                     } catch (ex) {
