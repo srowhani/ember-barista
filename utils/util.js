@@ -33,7 +33,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         var content = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
         var tests = arguments[1];
         var depth = arguments.length <= 2 || arguments[2] === undefined ? 2 : arguments[2];
-
         if (tests instanceof Array) {
           tests.forEach(function (test) {
             content += populate('', test, depth + 1);
@@ -141,7 +140,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return !el ? false : /Acceptance Criteria/.test(Object.keys(el)[0]);
     },
     compile: function compile(template, data) {
-      console.log(JSON.stringify(data))
       return new Promise(function (resolve, reject) {
         resolve(Handlebars.compile(require('../templates/' + template))(data));
       });
