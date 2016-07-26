@@ -1,3 +1,12 @@
+[ci-img]: https://img.shields.io/travis/ciena-blueplanet/ember-barista.svg "Travis CI Build Status"
+[ci-url]: https://travis-ci.org/ciena-blueplanet/ember-barista
+[cov-img]: https://img.shields.io/coveralls/ciena-blueplanet/ember-barista.svg "Coveralls Code Coverage"
+[cov-url]: https://coveralls.io/github/ciena-blueplanet/ember-barista
+[npm-img]: https://img.shields.io/npm/v/ember-barista.svg "NPM Version"
+[npm-url]: https://www.npmjs.com/package/ember-barista
+  
+# eslint-config-frost-standard <br /> [![Travis][ci-img]][ci-url] [![Coveralls][cov-img]][cov-url] [![NPM][npm-img]][npm-url]
+
 # ember-barista
 
 Tool to make life easier.
