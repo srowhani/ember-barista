@@ -1,3 +1,8 @@
 'use strict';
 
-module.exports = ['visitable', 'triggerable', 'fillable', 'clickable', 'click-on-text'];
+module.exports = {
+  textfield: 'fillable',
+  button: 'clickable',
+  page: 'visitable',
+  text: 'fillable'
+};

@@ -56,6 +56,7 @@
                 .then(issue => {
                   let comments = issue.fields.comment.comments
                   comments = comments
+                    .map(utils.preparse)
                     .map(utils.parse)
                     .filter(utils.validate)
                   if (!comments.length)
@@ -66,18 +67,31 @@
                     let
                       name       = Object.keys(comment)[0],
                       elements   = comment[name]['Elements'] || [],
-                      scenarios  = comment[name]['Scenarios'] || [],
                       title      = name.indexOf('|') > -1 ?
                         name.replace(/(.*)\|(.*)/, "$2").trim()
                         || issue.fields.summary : issue.fields.summary,
                       dasherized = utils.string(title.toLowerCase(), 'dasherize'),
                       camelized  = utils.string(title, 'camelize')
+                    elements = Object.keys(elements).map(e => {
+                      let o = {}
+                      o[e] = elements[e]
+                      return o
+                    })
+                    let a = Object.keys(utils.object)
+                    let scenarios = a.map(e => {
+                      let k = e.trim().replace(/\"/g, '')
+                      let obj = {}
+                      obj[k] = {
+                        Tests: utils.object[e].join(' ')
+                      }
+                      return obj
+                    })
                     return utils.compile('suite', {
                       title,
                       dasherized,
                       camelized,
                       elements,
-                      scenarios,
+                      scenarios
                     }).then(final => {
                       let dir = `${this.project.root}/tests/acceptance`
                       try {
@@ -90,9 +104,11 @@
                           `Succesfully wrote file to ${file}`
                         )
                       )
+                    }).catch(function (e) {
+                      throw new Error(e)
                     })
                 })
-              }).catch(utils.error)
+              })
             })
           }
         }

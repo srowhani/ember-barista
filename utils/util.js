@@ -16,6 +16,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * @return util
  */
 ;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, pkg) {
+  var object = {};
   module.exports = {
     // = Properties =================
     chalk: chalk,
@@ -25,6 +26,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     fs: fs,
     exec: exec,
     pkg: pkg,
+    object: object,
     // = Methods =================
     init: function init() {
       var populate = function populate() {
@@ -83,8 +85,8 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
           var name = S(key.toLowerCase()).dasherize().s;
           if (el[key]['Type']) {
             var type = el[key]['Type'].toLowerCase().trim();
-            if (types.indexOf(type) > -1) {
-              content += '  \'' + name + '\': ' + type + '(\'.' + name + '\')' + (elem[elem.length - 1] !== el ? ',\n' : '');
+            if (types[type]) {
+              content += '  \'' + name + '\': ' + types[type] + '(\'.' + name + '\')' + (elem[elem.length - 1] !== el ? ',\n' : '');
             }
           }
         });
@@ -93,19 +95,20 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       Handlebars.registerHelper('imports', function (elem, options) {
         var content = '';
         var o = {};
+        console.log('elements', elem);
         elem = elem.filter(function (el) {
           var key = Object.keys(el)[0];
           if (el[key]['Type']) {
             var type = el[key]['Type'].toLowerCase().trim();
-            if (types.indexOf(type) > -1 && !o[type]) {
-              return o[type] = true;
+            if (types[type] && !o[types[type]]) {
+              return o[types[type]] = true;
             }
           }
         });
         elem.forEach(function (el) {
           var key = Object.keys(el)[0];
           var type = el[key]['Type'].toLowerCase().trim();
-          content += '  ' + type + (elem[elem.length - 1] !== el ? ',\n' : '');
+          content += '  ' + types[type] + (elem[elem.length - 1] !== el ? ',\n' : '');
         });
         return new Handlebars.SafeString(content);
       });
@@ -128,22 +131,45 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     string: function string(text, method) {
       return S(text)[method]().s;
     },
+    preparse: function preparse(obj) {
+      var str = obj.body.replace(/([\w\W]+)Acceptance Criteria:([\w\W]+)/, 'Acceptance Criteria:$2');
+      var pretext = str.replace(/([\w\W]+)Scenarios:([\w\W]+)/, '$1');
+      var scenarios = str.replace(/([\w\W]+)Scenarios:([\w\W]+)/, '$2');
+      scenarios.split('\n').forEach(function (e) {
+        var matches = e.match(/"\w+"/g);
+
+        if (matches && e.indexOf('-') < 0) {
+          var m = matches.map(function (el) {
+            try {
+              return el.replace(/"(.*)"/, '$1').replace('\r', '');
+            } catch (e) {
+              return '';
+            }
+          });
+          object[e] = m;
+        }
+      });
+      obj.body = pretext;
+      return obj;
+    },
     parse: function parse(obj) {
-      console.log(obj);
       try {
         return yaml.load(obj.body);
       } catch (error) {
-        return false;
+        console.log(chalk.red.bold(error));
+        return null;
       }
     },
-    validate: function validate(el) {
-      return !el ? false : /Acceptance Criteria/.test(Object.keys(el)[0]);
+    validate: function validate(obj) {
+      return (typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object';
     },
     compile: function compile(template, data) {
+      console.log('compiled');
       return new Promise(function (resolve, reject) {
         try {
           resolve(Handlebars.compile(require('../templates/' + template))(data));
         } catch (e) {
+          console.log(e.stack);
           reject(e);
         }
       });
