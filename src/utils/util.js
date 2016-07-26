@@ -88,7 +88,6 @@
       Handlebars.registerHelper('imports', function (elem, options) {
         let content = ''
         let o = {}
-        console.log('elements', elem);
         elem = elem.filter(el => {
           let key  = Object.keys(el)[0]
           if (el[key]['Type']) {

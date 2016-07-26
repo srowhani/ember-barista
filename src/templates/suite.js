@@ -8,6 +8,9 @@ import {
   it
 } from 'mocha'
 
+import startApp from '../helpers/start-app';
+import destroyApp from '../helpers/destroy-app';
+
 import {
   create{{#if elements}},{{/if}}
 {{imports elements}}

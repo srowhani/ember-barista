@@ -95,7 +95,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       Handlebars.registerHelper('imports', function (elem, options) {
         var content = '';
         var o = {};
-        console.log('elements', elem);
         elem = elem.filter(function (el) {
           var key = Object.keys(el)[0];
           if (el[key]['Type']) {
