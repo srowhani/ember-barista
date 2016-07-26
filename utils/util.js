@@ -49,14 +49,18 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             content += S('  ').times(depth - 2) + '})\n';
             var t = tests['Tests'];
             if (t && t instanceof Array) {
-              return populate(content, t, depth) + (S(' ').times(depth) + '\n');
+              return populate(content, t, depth + 1) + (S(' ').times(depth) + '\n');
             }
           } else {
-            content += S(' ').times(depth + 1) + 'describe(\'' + k + '\', function () {\n';
-            return populate(content, tests[k], depth + 1) + (S(' ').times(depth + 1) + '})\n');
+            content += S('  ').times(depth + 1) + 'describe(\'' + k + '\', function () {\n';
+            return populate(content, tests[k], depth + 1) + (S('  ').times(depth + 1) + '})\n');
           }
         }
-        return content + (S(' ').times(depth + 1) + 'it(\'' + tests + '\', function () {})\n');
+        tests.split(' ').forEach(function (el) {
+          console.log(el);
+          content += S('  ').times(depth) + 'let ' + el + ' = PageObject[\'' + el.toLowerCase().trim() + '\']\n';
+        });
+        return content + (S('  ').times(depth) + 'it(\'' + tests + '\', function () {})\n');
       };
       Handlebars.registerHelper('describe', function (elem, options) {
         var content = '';

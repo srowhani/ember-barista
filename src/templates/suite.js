@@ -23,6 +23,7 @@ const PageObject = create({
 })
 
 describe('Acceptance: {{title}}', function () {
+  var application
   beforeEach(function () {
     application = startApp()
   })
