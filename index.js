@@ -71,14 +71,12 @@
                     var dir = _this.project.root + '/tests/acceptance';
                     try {
                       utils.fs.mkdirSync(dir);
-                    } catch (ex) {
-                      console.log(ex)
-                    }
+                    } catch (e) {}
                     var file = dir + '/' + dasherized + '-test.js';
                     try {
                       utils.fs.writeFileSync(file, final);
-                    } catch (ex) {
-                      console.log(ex)
+                    } catch (e) {
+                      console.log(e)
                     }
                     console.log(utils.chalk.green('Succesfully wrote file to ' + file));
                   });

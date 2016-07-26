@@ -48,7 +48,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
             content += S('  ').times(depth - 2) + '})\n';
             var t = tests['Tests'];
             if (t && t instanceof Array) {
-              return populate(content, t, depth) + (S(' ').times(depth) + '})\n');
+              return populate(content, t, depth) + (S(' ').times(depth) + '\n');
             }
           } else {
             content += S(' ').times(depth + 1) + 'describe(\'' + k + '\', function () {\n';
