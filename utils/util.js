@@ -1,3 +1,7 @@
+'use strict';
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 /**
  * Convenience tool for this convenience tool.
  * @param chalk      - Makes text pretty
@@ -8,150 +12,139 @@
  * @param fs         - node filesystem
  * @param types      - exec sync
  * @param types      - list of types to translate to ember-cli-page-object
- * @param package    - package.json
+ * @param packageJSON    - packageJSON.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, packageJSON) {
+  "use strict";
+
   module.exports = {
     // = Properties =================
-    chalk,
-    yaml,
-    Handlebars,
-    S,
-    fs,
-    exec,
-    package,
+    chalk: chalk,
+    yaml: yaml,
+    Handlebars: Handlebars,
+    S: S,
+    fs: fs,
+    exec: exec,
+    packageJSON: packageJSON,
     // = Methods =================
-    init () {
-      let populate = function (content = '', tests, depth = 2) {
+    init: function init() {
+      var populate = function populate() {
+        var content = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
+        var tests = arguments[1];
+        var depth = arguments.length <= 2 || arguments[2] === undefined ? 2 : arguments[2];
         if (tests instanceof Array) {
-          tests.forEach(test => {
-            content += populate('', test, depth + 1)
-          })
-          return content
-        } else if (typeof tests === 'object') {
-          let k = Object.keys(tests)[0]
+          tests.forEach(function (test) {
+            content += populate('', test, depth + 1);
+          });
+          return content;
+        } else if ((typeof tests === 'undefined' ? 'undefined' : _typeof(tests)) === 'object') {
+          var k = Object.keys(tests)[0];
           if (k === 'Setup' && tests[k] instanceof Array) {
-            content += `${S('  ').times(depth-2)}beforeEach(function () {\n`
-            tests[k].forEach(e => {
-              content += `${S('  ').times(depth-1)}//TODO ${e}\n`
-            })
-            content += `${S('  ').times(depth-2)}})\n`
-            let t = tests['Tests']
-            if(t && t instanceof Array) {
-              return populate(content, t, depth) + `${S(' ').times(depth)}})\n`
+            content += S('  ').times(depth - 2) + 'beforeEach(function () {\n';
+            tests[k].forEach(function (e) {
+              content += S('  ').times(depth - 1) + '//TODO ' + e + '\n';
+            });
+            content += S('  ').times(depth - 2) + '})\n';
+            var t = tests['Tests'];
+            if (t && t instanceof Array) {
+              return populate(content, t, depth) + (S(' ').times(depth) + '})\n');
             }
-          }
-          else {
-            content += `${S(' ').times(depth + 1)}describe('${k}', function () {\n`
-            return populate(content, tests[k], depth + 1) + `${S(' ').times(depth + 1)}})\n`
+          } else {
+            content += S(' ').times(depth + 1) + 'describe(\'' + k + '\', function () {\n';
+            return populate(content, tests[k], depth + 1) + (S(' ').times(depth + 1) + '})\n');
           }
         }
-        return content + `${S(' ').times(depth + 1)}it('${tests}', function () {})\n`
-      }
+        return content + (S(' ').times(depth + 1) + 'it(\'' + tests + '\', function () {})\n');
+      };
       Handlebars.registerHelper('describe', function (elem, options) {
-        let content = ''
-        elem.forEach(el => {
-          let key = Object.keys(el)[0]
-          let tests = el[key]['Tests']
+        var content = '';
+        elem.forEach(function (el) {
+          var key = Object.keys(el)[0];
+          var tests = el[key]['Tests'];
           if (tests) {
-            content += `\n${S('  ').times(1)}describe('${key}', function () {\n`
-            let before = el[key]['Setup']
+            content += '\n' + S('  ').times(1) + 'describe(\'' + key + '\', function () {\n';
+            var before = el[key]['Setup'];
             if (before && before instanceof Array) {
-              content += `${S('  ').times(2)}beforeEach(function () {\n`
-              before.forEach(e => {
-                content += `${S('  ').times(3)}// TODO ${e}\n`
-              })
-              content += `${S('  ').times(2)}})\n`
+              content += S('  ').times(2) + 'beforeEach(function () {\n';
+              before.forEach(function (e) {
+                content += S('  ').times(3) + '// TODO ' + e + '\n';
+              });
+              content += S('  ').times(2) + '})\n';
             }
-            content += populate('', tests) + `${S('  ').times(1)}})`
+            content += populate('', tests) + (S('  ').times(1) + '})');
           }
-        })
-        return new Handlebars.SafeString(content)
-      })
+        });
+        return new Handlebars.SafeString(content);
+      });
       Handlebars.registerHelper('page', function (elem, options) {
-        let content = ''
-        elem.forEach(el => {
-          let key  = Object.keys(el)[0]
-          let name = S(key.toLowerCase()).dasherize().s
+        var content = '';
+        elem.forEach(function (el) {
+          var key = Object.keys(el)[0];
+          var name = S(key.toLowerCase()).dasherize().s;
           if (el[key]['Type']) {
-            let type = el[key]['Type'].toLowerCase().trim()
+            var type = el[key]['Type'].toLowerCase().trim();
             if (types.indexOf(type) > -1) {
-              content += `  '${name}': ${type}('.${name}')${elem[elem.length-1] !== el ? ',\n' : ''}`
+              content += '  \'' + name + '\': ' + type + '(\'.' + name + '\')' + (elem[elem.length - 1] !== el ? ',\n' : '');
             }
           }
-        })
-        return new Handlebars.SafeString(content)
-      })
+        });
+        return new Handlebars.SafeString(content);
+      });
       Handlebars.registerHelper('imports', function (elem, options) {
-        let content = ''
-        let o = {}
-        elem = elem.filter(el => {
-          let key  = Object.keys(el)[0]
+        var content = '';
+        var o = {};
+        elem = elem.filter(function (el) {
+          var key = Object.keys(el)[0];
           if (el[key]['Type']) {
-            let type = el[key]['Type'].toLowerCase().trim()
+            var type = el[key]['Type'].toLowerCase().trim();
             if (types.indexOf(type) > -1 && !o[type]) {
-              return o[type] = true
+              return o[type] = true;
             }
           }
-        })
-        elem.forEach(el => {
-          let key  = Object.keys(el)[0]
-          let type = el[key]['Type'].toLowerCase().trim()
-          content += `  ${type}${elem[elem.length-1] !== el ? ',\n' : ''}`
-        })
-        return new Handlebars.SafeString(content)
-      })
+        });
+        elem.forEach(function (el) {
+          var key = Object.keys(el)[0];
+          var type = el[key]['Type'].toLowerCase().trim();
+          content += '  ' + type + (elem[elem.length - 1] !== el ? ',\n' : '');
+        });
+        return new Handlebars.SafeString(content);
+      });
     },
-    error (err) {
-      console.error(chalk.red.bold(err))
-      process.exit(1)
+    error: function error(err) {
+      console.error(chalk.red.bold(err));
+      process.exit(1);
     },
-    log (msg) {
-      console.log(chalk.cyan(msg))
+    log: function log(msg) {
+      console.log(chalk.cyan(msg));
     },
-    prompt (prompts) {
-      return inquire.prompt(prompts)
+    prompt: function prompt(prompts) {
+      return inquire.prompt(prompts);
     },
-    debug (msg) {
+    debug: function debug(msg) {
       if (this.config.debug) {
-        this.log(`DEBUG: ${msg}`)
+        this.log('DEBUG: ' + msg);
       }
     },
-    string (text, method) {
-      return S(text)[method]().s
+    string: function string(text, method) {
+      return S(text)[method]().s;
     },
-    parse (obj) {
+    parse: function parse(obj) {
       try {
-        return yaml.load(obj.body)
+        return yaml.load(obj.body);
       } catch (error) {
-        return false
+        return false;
       }
     },
-    validate (el) {
-      return !el ?
-        false :
-        /Acceptance Criteria/.test(Object.keys(el)[0])
+    validate: function validate(el) {
+      return !el ? false : /Acceptance Criteria/.test(Object.keys(el)[0]);
     },
-    compile (template, data) {
-      return new Promise((resolve, reject) => {
-        try {
-          resolve(Handlebars.compile(require(`../templates/${template}`))(data))
-        } catch (e) {
-          reject(e)
-        }
-      })
+    compile: function compile(template, data) {
+      return new Promise(function (resolve, reject) {
+        resolve(Handlebars.compile(require('../templates/' + template))(data));
+      });
     },
-    write: fs.writeFileSync,
-  }
-})(
-  require('chalk'),
-  require('js-yaml'),
-  require('inquirer'),
-  require('handlebars'),
-  require('string'),
-  require('fs'),
-  require('child_process').execSync,
-  require('./pagetypes'),
-  require('../package.json')
-);
+
+    write: fs.writeFileSync
+  };
+})(require('chalk'), require('js-yaml'), require('inquirer'), require('handlebars'), require('string'), require('fs'), require('child_process').execSync, require('./pagetypes'), require('../package.json'));
