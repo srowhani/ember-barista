@@ -122,7 +122,6 @@
       return S(text)[method]().s
     },
     parse (obj) {
-      console.log(obj)
       try {
         return yaml.load(obj.body)
       } catch (error) {

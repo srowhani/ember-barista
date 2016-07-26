@@ -129,7 +129,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return S(text)[method]().s;
     },
     parse: function parse(obj) {
-      console.log(obj);
       try {
         return yaml.load(obj.body);
       } catch (error) {
