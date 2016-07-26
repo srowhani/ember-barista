@@ -11,7 +11,7 @@
  * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, package) {
+;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, pkg) {
   module.exports = {
     // = Properties =================
     chalk,
@@ -20,7 +20,7 @@
     S,
     fs,
     exec,
-    package,
+    pkg,
     // = Methods =================
     init () {
       let populate = function (content = '', tests, depth = 2) {
@@ -122,6 +122,7 @@
       return S(text)[method]().s
     },
     parse (obj) {
+      console.log(obj)
       try {
         return yaml.load(obj.body)
       } catch (error) {

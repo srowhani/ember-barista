@@ -1,8 +1,3 @@
-"use strict"
-module.exports = [
-  'visitable',
-  'triggerable',
-  'fillable',
-  'clickable',
-  'click-on-text'
-]
+'use strict';
+
+module.exports = ['visitable', 'triggerable', 'fillable', 'clickable', 'click-on-text'];

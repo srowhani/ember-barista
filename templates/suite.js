@@ -1,3 +1,3 @@
-'use strict';
+"use strict";
 
-module.exports = 'import chai from \'chai\'\nimport sinon from \'sinon\'\n\nimport {\n  beforeEach,\n  afterEach,\n  it\n} from \'mocha\'\n\nimport {\n  create{{#if elements}},{{/if}}\n{{imports elements}}\n} from \'ember-cli-page-object\'\n\nconst expect = chai.expect\n\nconst PageObject = create({\n{{page elements}}\n})\n\ndescribe(\'Acceptance: {{title}}\', function () {\n  beforeEach(function () {\n    application = startApp()\n  })\n\n  afterEach(function () {\n    destroyApp(application)\n  })\n{{describe scenarios}}\n})\n';
+module.exports = "import chai from 'chai'\nimport sinon from 'sinon'\n\nimport {\n  beforeEach,\n  afterEach,\n  it\n} from 'mocha'\n\nimport {\n  create{{#if elements}},{{/if}}\n{{imports elements}}\n} from 'ember-cli-page-object'\n\nconst expect = chai.expect\n\nconst PageObject = create({\n{{page elements}}\n})\n\ndescribe('Acceptance: {{title}}', function () {\n  beforeEach(function () {\n    application = startApp()\n  })\n\n  afterEach(function () {\n    destroyApp(application)\n  })\n{{describe scenarios}}\n})\n";

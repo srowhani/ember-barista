@@ -1,15 +1,11 @@
 #!/usr/bin/env node
-
 'use strict';
 
 /**
  * @author Seena Rowhani
  * @description Auto-generate test scaffolding using JIRA
  */
-;
-(function(Jira, utils) {
-  "use strict";
-
+;(function (Jira, utils) {
   module.exports = {
     name: 'ember-barista',
     includedCommands: function includedCommands() {
@@ -40,7 +36,7 @@
               type: 'password',
               name: 'pass',
               message: color('Password:')
-            }]).then(function(answers) {
+            }]).then(function (answers) {
               var jira = new Jira({
                 protocol: 'https',
                 host: answers.host || process.env.JIRA_HOST,
@@ -49,42 +45,34 @@
                 apiVersion: '2',
                 strictSSL: true
               });
-              return jira.findIssue(answers.issue || process.env.JIRA_ISSUE).then(function(issue) {
+              return jira.findIssue(answers.issue || process.env.JIRA_ISSUE).then(function (issue) {
                 var comments = issue.fields.comment.comments;
                 comments = comments.map(utils.parse).filter(utils.validate);
                 if (!comments.length) utils.error('No valid \'barista\' commands were found in ' + issue.key);
-                comments.forEach(function(comment) {
+                comments.forEach(function (comment) {
                   var name = Object.keys(comment)[0],
-                    elements = comment[name]['Elements'] || [],
-                    scenarios = comment[name]['Scenarios'] || [],
-                    title = name.indexOf('|') > -1 ? name.replace(/(.*)\|(.*)/, "$2").trim() || issue.fields.summary : issue.fields.summary;
-                  var dasherized = utils.string(title.toLowerCase(), 'dasherize');
-
-                  var camelized = utils.string(title, 'camelize');
+                      elements = comment[name]['Elements'] || [],
+                      scenarios = comment[name]['Scenarios'] || [],
+                      title = name.indexOf('|') > -1 ? name.replace(/(.*)\|(.*)/, "$2").trim() || issue.fields.summary : issue.fields.summary,
+                      dasherized = utils.string(title.toLowerCase(), 'dasherize'),
+                      camelized = utils.string(title, 'camelize');
                   return utils.compile('suite', {
                     title: title,
                     dasherized: dasherized,
                     camelized: camelized,
                     elements: elements,
                     scenarios: scenarios
-                  }).then(function(final) {
+                  }).then(function (final) {
                     var dir = _this.project.root + '/tests/acceptance';
                     try {
                       utils.fs.mkdirSync(dir);
                     } catch (e) {}
                     var file = dir + '/' + dasherized + '-test.js';
-                    try {
-                      utils.fs.writeFileSync(file, final);
-                    } catch (e) {
-                      console.log(e)
-                    }
+                    utils.write(file, final);
                     console.log(utils.chalk.green('Succesfully wrote file to ' + file));
                   });
                 });
-              }).catch(function error(err) {
-                console.error(chalk.red.bold(err));
-                process.exit(1);
-              });
+              }).catch(utils.error);
             });
           }
         }

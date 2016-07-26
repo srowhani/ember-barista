@@ -12,12 +12,10 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
  * @param fs         - node filesystem
  * @param types      - exec sync
  * @param types      - list of types to translate to ember-cli-page-object
- * @param packageJSON    - packageJSON.json
+ * @param package    - package.json
  * @return util
  */
-;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, packageJSON) {
-  "use strict";
-
+;(function (chalk, yaml, inquire, Handlebars, S, fs, exec, types, pkg) {
   module.exports = {
     // = Properties =================
     chalk: chalk,
@@ -26,13 +24,14 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     S: S,
     fs: fs,
     exec: exec,
-    packageJSON: packageJSON,
+    pkg: pkg,
     // = Methods =================
     init: function init() {
       var populate = function populate() {
         var content = arguments.length <= 0 || arguments[0] === undefined ? '' : arguments[0];
         var tests = arguments[1];
         var depth = arguments.length <= 2 || arguments[2] === undefined ? 2 : arguments[2];
+
         if (tests instanceof Array) {
           tests.forEach(function (test) {
             content += populate('', test, depth + 1);
@@ -130,6 +129,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
       return S(text)[method]().s;
     },
     parse: function parse(obj) {
+      console.log(obj);
       try {
         return yaml.load(obj.body);
       } catch (error) {
@@ -141,7 +141,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
     },
     compile: function compile(template, data) {
       return new Promise(function (resolve, reject) {
-        resolve(Handlebars.compile(require('../templates/' + template))(data));
+        try {
+          resolve(Handlebars.compile(require('../templates/' + template))(data));
+        } catch (e) {
+          reject(e);
+        }
       });
     },
 
